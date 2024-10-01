@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <fstream>
 
 using namespace std;
 struct Nota{
@@ -19,6 +20,39 @@ struct nodo {
     Usuario info;
     nodo *sig;  
 };
+
+void guardarUsuario(Usuario usuario) {
+    ofstream archivo("usuarios.txt", ios::app);
+    if(archivo.is_open()) {
+        archivo << "ID: " << usuario.ID << endl;
+        archivo << "Nombre: " << usuario.Nombre << endl;
+        archivo << "Contraseña: " << usuario.Contraseña << endl;
+        archivo << "Notas: " << usuario.CanNotas << endl;
+        archivo << "-------------------------------" << endl;
+        archivo.close();
+        cout << "Datos guardados en el archivo 'usuarios.txt'.\n";
+    } else {
+        cout << "Error al abrir el archivo.\n";
+    }
+}
+
+bool verificarIDUnico(int id) {
+    ifstream archivo("usuarios.txt");
+    string linea;
+    if (archivo.is_open()) {
+        while (getline(archivo, linea)) {
+            if (linea.find("ID: ") != string::npos) {
+                int idExistente = stoi(linea.substr(4));
+                if (idExistente == id) {
+                    archivo.close();
+                    return false;
+                }
+            }
+        }
+        archivo.close();
+    }
+    return true;
+}
 
 Usuario CrearUsuario(){
 
@@ -39,7 +73,11 @@ Usuario CrearUsuario(){
         string cantidadCaracteres = to_string(nuevoUsuario.ID);
 
         if (cantidadCaracteres.length()>= 7 and cantidadCaracteres.length() <= 10){
-            confirmarID = false;
+            if (verificarIDUnico(nuevoUsuario.ID)) {
+                confirmarID = false;
+            } else {
+                cout << "El ID ya esta en uso. Por favor, intente con otro.\n";
+            }
         }
         else{
             cout<<"El ID solo debe tener de entre 7 a 10 numeros.\n";
@@ -114,10 +152,40 @@ void imprimirUsuario(nodo *imp){
     }
 };
 
+bool iniciarseccion(nodo *Usuarios){
+
+    int ID;
+    cin>>ID;
+    cout<<"\nIngrese tu ID: ";
+    cin>>ID;
+    cin.ignore();
+    string contraseña;
+    cout<<"\nIngrese su contraseña: ";
+    cin>>contraseña;
+    cin.ignore();
+    nodo *temp = Usuarios;
+    
+    while (temp != NULL) {
+        if (temp ->info.ID == ID and temp->info.Contraseña == contraseña){
+            cout<<"Iniciando seccion\n";
+            cout<<"Bienvenido "<<temp->info.Nombre<<endl;
+            return true;
+        }
+        temp = temp ->sig;
+    }
+
+    cout<<"ID de usuario o contraseña incorrecta\n";
+    return false;
+
+};
+
 int main(){
 
     nodo *nuevoUsuario = crearNodo();
 
+    guardarUsuario(nuevoUsuario->info);
+
     imprimirUsuario(nuevoUsuario);
 
+    iniciarseccion(nuevoUsuario);
 }
