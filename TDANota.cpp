@@ -3,13 +3,14 @@
 #include<string>
 #include<vector>
 #include<ctime>
+#include <cstdlib>
 using namespace std;
 
-struct fecha{
+struct fecha{ //Estructura para las fechas
     int d, m, a;
 };
 
-struct Nota{
+struct Nota{ //Estructura de las notas
     string id;
     string titulo;
     string contenido;
@@ -17,7 +18,7 @@ struct Nota{
     fecha fechaModificacion;
 };
 
-fecha ObtenerFechaActual(){
+fecha ObtenerFechaActual(){ //Funcion para agregar la fecha actual del sistema
     time_t tiempoActual=time(NULL);
     tm* fechaLocal=localtime(&tiempoActual);
     fecha fechaActual;
@@ -27,7 +28,7 @@ fecha ObtenerFechaActual(){
     return fechaActual;
 }
 
-Nota CrearNota(int idUsuario, int numeroNota){
+Nota CrearNota(int idUsuario, int numeroNota){ //Funcion para la creacion de una nueva nota por parte de un usuario
     Nota nuevaNota;
     string stringUsuario = to_string(idUsuario);
     string idNota = to_string(numeroNota + 1);
@@ -47,7 +48,7 @@ Nota CrearNota(int idUsuario, int numeroNota){
     return nuevaNota;
 }
 
-void MostrarNota(const Nota &nota) {
+void MostrarNota(const Nota &nota) { //Procedimiento para imprimir una nota
     cout << "ID: " << nota.id << endl;
     cout << "TITULO: " << nota.titulo << endl;
     cout << "CONTENIDO: " << nota.contenido << endl;
@@ -60,11 +61,11 @@ void MostrarNota(const Nota &nota) {
     }
 }
 
-void EditarNota(Nota &nota) {
+void EditarNota(Nota &nota) { //Procedimiento para editar una nota
     bool cambios = false;
     char cTitulo, cContenido;
 
-    cout << "Desea cambiar el titulo de la nota? (S/N) ";
+    cout << "Desea cambiar el titulo de la nota? (S/N) ";//Si desea cambiar el titulo
     cin >> cTitulo;
     cout << endl;
     cin.ignore();
@@ -74,7 +75,7 @@ void EditarNota(Nota &nota) {
         cambios = true;
     }
 
-    cout << "Desea cambiar el contenido de la nota? (S/N) ";
+    cout << "Desea cambiar el contenido de la nota? (S/N) ";//Si desea cambiar el contenido
     cin >> cContenido;
     cout << endl;
     cin.ignore();
@@ -90,7 +91,7 @@ void EditarNota(Nota &nota) {
     }
 }
 
-void EliminarNota(vector<Nota> &notas, const string &id) {
+void EliminarNota(vector<Nota> &notas, const string &id) { //Procedimiento para eliminar una nota
     for (auto it = notas.begin(); it != notas.end(); ++it) {
         if (it->id == id) {
             notas.erase(it);
@@ -98,5 +99,5 @@ void EliminarNota(vector<Nota> &notas, const string &id) {
             return;
         }
     }
-    cout << "No se encontró la nota con ID: " << id << endl;
+    cout << "No se encontro la nota con ID: " << id << endl;
 }

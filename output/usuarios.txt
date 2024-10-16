@@ -1,45 +1,36 @@
 ID: 12345678
 Nombre: marcelo
-Contraseña: pudin
-Cantidad de Notas: 0
+Contrasenia: pudin
 -------------------------------
 ID: 987654321
 Nombre: juanpa
-Contraseña: 12345
-Cantidad de Notas: 0
+Contrasenia: 12345
 -------------------------------
 ID: 3456789
 Nombre: MARCELO
-Contraseña: contrasena
-Cantidad de Notas: 0
+Contrasenia: contrasena
 -------------------------------
 ID: 1040871104
 Nombre: JUAN PABLO
-Contraseña: ABCDF
-Cantidad de Notas: 0
+Contrasenia: ABCDF
 -------------------------------
 ID: 5687965
 Nombre: FELIPE
-Contraseña: CHOCORRAMIN
-Cantidad de Notas: 0
+Contrasenia: CHOCORRAMIN
 -------------------------------
 ID: 69844875
 Nombre: VALENTINA
-Contraseña: VALEMVP
-Cantidad de Notas: 0
+Contrasenia: VALEMVP
 -------------------------------
 ID: 4566565
 Nombre: THOMAS JOSE
-Contraseña: EL PAPA
-Cantidad de Notas: 0
+Contrasenia: EL PAPA
 -------------------------------
 ID: 6694545
 Nombre: CAMILIN
-Contraseña: SOLOLOL
-Cantidad de Notas: 0
+Contrasenia: SOLOLOL
 -------------------------------
 ID: 56955654
 Nombre: LUISILLO
-Contraseña: TRAVIESO
-Cantidad de Notas: 0
+Contrasenia: TRAVIESO
 -------------------------------
