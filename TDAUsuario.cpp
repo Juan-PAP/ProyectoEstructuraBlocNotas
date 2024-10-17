@@ -14,12 +14,41 @@ struct NotaAux{ //Estructura para manejar las notas pertenecientes a un usuario
 
 };
 
-void guardarUsuario(const Usuario &usuario) { //Procedimiento para guardar un nuevo usuario en el archivo
+struct nodoUsuario{
+    Usuario info;
+    nodoUsuario *siguiente;
+};
+struct ListaSimple{
+    nodoUsuario *cabeza;
+    nodoUsuario *cola;
+};
+
+
+
+
+void IngresarNodo(nodoUsuario *Usuario, ListaSimple *&LU){
+
+    if(LU->cabeza == NULL){
+        
+        LU -> cabeza = LU -> cola = Usuario;
+        Usuario -> siguiente = NULL;
+    }
+
+    else{
+        LU ->cola -> siguiente = Usuario;
+        LU ->cola = Usuario;
+        Usuario ->siguiente = NULL;
+    }
+}
+nodoUsuario *crearNodo();
+Usuario CrearUsuario();
+
+void guardarUsuario(nodoUsuario *usuario) { //Procedimiento para guardar un nuevo usuario en el archivo
     ofstream archivo("usuarios.txt", ios::app);
     if (archivo.is_open()) {
-        archivo << "ID: " << usuario.ID << endl;
-        archivo << "Nombre: " << usuario.Nombre << endl;
-        archivo << "Contrasenia: " << usuario.Contrasenia << endl;
+        archivo << "ID: " << usuario->info.ID << endl;
+        archivo << "Nombre: " << usuario->info.Nombre << endl;
+        archivo << "Contrasenia: " << usuario->info.Contrasenia << endl;
         archivo << "-------------------------------" << endl;
         archivo.close();
         cout << "Datos guardados en el archivo 'usuarios.txt'.\n";
@@ -47,56 +76,75 @@ bool verificarIDUnico(int id) { //Funcio para confirmar si el ID es unico dentro
     return true;
 }
 
-Usuario CrearUsuario() {//Funcion para crear un nuevo usuario
+Usuario CrearUsuario(){
+
     Usuario nuevoUsuario;
     bool confirmarID = true;
-
-    while (confirmarID){ //Confirmar si el ID cumple con las restricciones
-        cout << "Ingrese su ID, debe tener entre 7 a 10 numeros: ";
-        cin >> nuevoUsuario.ID;
-
-        if (cin.fail()) {
+    while(confirmarID){
+        cout<<"Ingrese su ID, debe tener entre 7 a 10 numeros: ";
+        cin>>nuevoUsuario.ID;
+        if(cin.fail()){
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Solo se permiten caracteres numericos para el ID.\n";
+            cout<<"Solo se permiten caracteres numericos para el ID.\n";
             continue;
         }
-
         string cantidadCaracteres = to_string(nuevoUsuario.ID);
 
-        if (cantidadCaracteres.length() >= 7 && cantidadCaracteres.length() <= 10){ 
+        if (cantidadCaracteres.length()>= 7 and cantidadCaracteres.length() <= 10){
+            confirmarID = false;
             if (verificarIDUnico(nuevoUsuario.ID)) {
                 confirmarID = false;
-            } 
-            else {
+            } else {
                 cout << "El ID ya esta en uso. Por favor, intente con otro.\n";
             }
-        } 
-        else {
-            cout << "El ID solo debe tener de entre 7 a 10 numeros.\n";
-            cout << "Por favor, intentalo de nuevo.\n";
+        }
+        else{
+            cout<<"El ID solo debe tener de entre 7 a 10 numeros.\n";
+            cout<<"Por favor, intentalo de nuevo.\n";
             cin.ignore();
         }
     }
-
     cin.ignore();
-
-    do {//Confirmar si el nombre de usuario cumple con las condiciones
-        cout << "Ingrese su nombre de usuario, debe tener entre 6 a 18 caracteres: ";
-        getline(cin, nuevoUsuario.Nombre);
-    } while (nuevoUsuario.Nombre.length() < 6 || nuevoUsuario.Nombre.length() > 18);
-
-    do {//Confirmar si la contraseña cumple con las condiciones
-        cout << "Ingrese su contrasenia, debe tener entre 4 a 12 caracteres: ";
-        getline(cin, nuevoUsuario.Contrasenia);
-    } while (nuevoUsuario.Contrasenia.length() < 4 || nuevoUsuario.Contrasenia.length() > 12);
-
+    bool confirmarNombre = true;
+    while(confirmarNombre){
+        cout<<"Ingrese su nombre de usuario, debe tener entre 6 a 18 caracteres: ";
+        getline(cin,nuevoUsuario.Nombre);
+        if (nuevoUsuario.Nombre.length()>= 6 and nuevoUsuario.Nombre.length()<= 18){
+            confirmarNombre = false;
+        }
+        else{
+            cout<<"El nombre debe tener de 6 a 18 caracteres\n";
+            cout<<"Por favor, intentalo de nuevo\n";
+        }
+    }
+    bool confirmarContraseña = true;
+    while(confirmarContraseña){
+        cout<<"Ingrese su contraseña, debe tener entre 4 a 12 caracteres: ";
+        getline(cin,nuevoUsuario.Contrasenia);
+        if (nuevoUsuario.Contrasenia.length() >= 4 and nuevoUsuario.Contrasenia.length()<= 12){           
+            confirmarContraseña = false;
+        }
+        else{
+            cout<<"La contraseña solo debe tener de 4 a 12 caracteres\n";
+            cout<<"Por favor, intentalo de nuevo\n";
+        }
+    }
     return nuevoUsuario;
 }
 
-void imprimirUsuario(const Usuario &usuario) {//Procedimiento para imprimer la informacion del usuario
-    cout << "ID: " << usuario.ID << endl;
-    cout << "Nombre: " << usuario.Nombre << endl;
+nodoUsuario *crearNodo(){
+    nodoUsuario *nuevo;
+    nuevo = new(nodoUsuario);
+    nuevo->info = CrearUsuario();
+    nuevo ->siguiente = NULL;
+    return nuevo;
+}
+
+void imprimirUsuario(nodoUsuario *imp){
+    cout<<"Los datos del usuario serian:\n";
+    cout<<"ID: "<< imp->info.ID<<endl;
+    cout<<"Nombre: "<< imp->info.Nombre<<endl;
 }
 
 void GuardarNotas(const vector<Nota> &notas, Usuario usuario) {//Procedimiento para guardar las notas de un usuario especifico en el archivo notas

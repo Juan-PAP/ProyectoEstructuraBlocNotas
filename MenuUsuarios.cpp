@@ -1,17 +1,50 @@
 #include"MenuNotas.cpp"
 
-vector<Usuario> cargarUsuarios();
-Usuario iniciarSesion(const vector<Usuario> &usuarios);
+Usuario iniciarSesion(ListaSimple *ListaUsuarios);
 void mostrarMenuNotas(Usuario &usuario);
+
+ListaSimple *ListaUsuarios = new (ListaSimple);
+
+void cargarUsuarios(){ // Lista desde donde se cargan los usuarios almacenados en el archivo
+    ifstream archivo("usuarios.txt");
+   
+    if (archivo.is_open()) {
+        Usuario usuario;
+        string linea;
+        ListaUsuarios ->cabeza = nullptr;
+
+        while (getline(archivo, linea)) {
+
+            nodoUsuario *Usuarios = new nodoUsuario;
+
+            if (linea.find("ID: ") != string::npos) {
+                
+                Usuarios->info.ID = stoi(linea.substr(4));
+                getline(archivo, linea);
+                Usuarios->info.Nombre = linea.substr(8);
+                getline(archivo, linea);
+                Usuarios->info.Contrasenia = linea.substr(13);
+
+                IngresarNodo(Usuarios,ListaUsuarios);
+            }
+        }
+        archivo.close();
+    } else {
+        cout << "Error al abrir el archivo." << endl;
+    }
+}
 
 //Procedimiento en donde se imprime el menu de inicio
 void menuUsuarios(){
-    vector<Usuario> usuarios = cargarUsuarios();
+
+    cout<< "Cargando usuarios"<< endl;
+    cargarUsuarios();
+
+    cout << "Usuarios cargados, mostrando menu..." << endl;
+
     int opcion;
 
     do {
-
-        system("cls");
 
         cout << "========= MENU PRINCIPAL =========\n";
         cout << "1. Crear usuario\n";
@@ -23,14 +56,15 @@ void menuUsuarios(){
 
         switch (opcion) {
             case 1: {//Crea un usuario nuevo
-                Usuario nuevoUsuario = CrearUsuario(); 
-                usuarios.push_back(nuevoUsuario);
+
+                nodoUsuario *nuevoUsuario = crearNodo(); 
+                IngresarNodo(nuevoUsuario, ListaUsuarios);
                 guardarUsuario(nuevoUsuario);//El nuevo usuario creado se guarda en el archivo usuarios.txt
                 cout << "Usuario creado exitosamente.\n\n";
                 break;
             }
             case 2: {//Si ya existe el usuario, puede iniciar sesion con el mismo
-                Usuario usuarioLogeado = iniciarSesion(usuarios);
+                Usuario usuarioLogeado = iniciarSesion(ListaUsuarios);
                 if (usuarioLogeado.ID != -1) {
                     usuarioLogeado.notas = CargarNotas(usuarioLogeado.ID);
                     mostrarMenuNotas(usuarioLogeado);//Si es exitoso, entrara al menu de notas
@@ -44,35 +78,14 @@ void menuUsuarios(){
                 cout << "Opcion no valida. Intente de nuevo.\n";
         }
         system("pause");
+        system("cls");
 
     } while (opcion != 3);
     system("cls");
 }
 
-vector<Usuario> cargarUsuarios(){//Vector desde donde se cargan los usuarios almacenados en el archivo
-    vector<Usuario> usuarios;
-    ifstream archivo("usuarios.txt");
-    if (archivo.is_open()) {
-        Usuario usuario;
-        string linea;
 
-        while (getline(archivo, linea)) {
-            if (linea.find("ID: ") != string::npos) {
-                usuario.ID = stoi(linea.substr(4));
-                getline(archivo, linea);
-                usuario.Nombre = linea.substr(8);
-                getline(archivo, linea);
-                usuario.Contrasenia = linea.substr(13);
-
-                usuarios.push_back(usuario);
-            }
-        }
-        archivo.close();
-    }
-    return usuarios;
-}
-
-Usuario iniciarSesion(const vector<Usuario> &usuarios) {//Funion para iniciar sesion
+Usuario iniciarSesion(ListaSimple *ListaUsuarios) {//Funion para iniciar sesion
     int id;
     string contrasenia;
 
@@ -94,13 +107,25 @@ Usuario iniciarSesion(const vector<Usuario> &usuarios) {//Funion para iniciar se
     cout << "Ingrese su contrasenia: ";
     cin >> contrasenia;
 
-    for (const auto &usuario : usuarios) {
-        if (usuario.ID == id && usuario.Contrasenia == contrasenia) {
-            cout << "Inicio de sesion exitoso.\n\n";
-            return usuario;
+    nodoUsuario *temp = ListaUsuarios->cabeza;
+    bool usuarioEncontrado = false; 
+    Usuario usuarioLog {-1, " "," ",{}};
+
+    while (temp != NULL) {
+        if (temp ->info.ID == id and temp->info.Contrasenia == contrasenia){
+            cout<<"Iniciando seccion\n";
+            cout<<"Bienvenido "<<temp->info.Nombre<<endl;
+           usuarioEncontrado = true;
+            usuarioLog = temp ->info;
         }
+        temp = temp ->siguiente;
+    }
+    if (usuarioEncontrado) {
+    return usuarioLog;
+    } 
+    else {
+    return Usuario{-1, "", "", {}};
     }
 
-    cout << "Credenciales incorrectas. Por favor, intente de nuevo.\n\n";
-    return {-1, "", "", {}};
+
 }
